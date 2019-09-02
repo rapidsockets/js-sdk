@@ -1,17 +1,21 @@
 const is_node = typeof window === 'undefined';
 
-if (is_node) {
-    const sha256 = require('./sha256.js');
-}
-
 class RapidSockets {
 
     constructor(options = {}) {
+        if (is_node) {
+            this._ws = require('ws');
+            this._sha256 = require('./sha256.js');
+        } else {
+            this._ws = WebSocket;
+            this._sha256 = sha256;
+        }
+
         this.gateway = options.gateway || 'wss://gateway.rapidsockets.com';
         this.api = options.api || 'https://api.rapidsockets.com'
         this.connection = null;
         this.authenticated = false;
-        this.session = sha256(Math.random() + '-' + Math.random() + '-' + Math.random());
+        this.session = this._sha256(Math.random() + '-' + Math.random() + '-' + Math.random());
         this.message_queue = [];
         this.cbs = [];
         this.subscriptions = [];
@@ -22,18 +26,14 @@ class RapidSockets {
     }
 
     open_connection() {
+        this.connection = new this._ws(this.gateway);
+
         if (is_node) {
-            const ws = require('ws');
-
-            this.connection = new WebSocket(this.gateway);
-
             this.connection.on('open', this.on_open.bind(this));
             this.connection.on('message', this.on_message.bind(this));
             this.connection.on('close', this.on_close.bind(this));
             this.connection.on('error', this.on_error.bind(this));
         } else {
-            this.connection = new WebSocket(this.gateway);
-
             this.connection.onopen = this.on_open.bind(this);
             this.connection.onmessage = this.on_message.bind(this);
             this.connection.onclose = this.on_close.bind(this);
@@ -58,7 +58,7 @@ class RapidSockets {
 
     on_message(message) {
         try {
-            message = JSON.parse(message.data);
+            message = JSON.parse(is_node ? message : message.data);
 
             // handle auth fail
             if (message.code === 'auth_fail') {
@@ -174,17 +174,33 @@ class RapidSockets {
     }
 
     publish(options) {
-        const http = window.XMLHttpRequest
-            ? new XMLHttpRequest()
-            : new ActiveXObject("Microsoft.XMLHTTP");
-
-        http.open('POST', this.api + '/v1/messages');
-        http.setRequestHeader('Authorization', this.key);
-        http.setRequestHeader('Content-Type', 'application/json');
-        http.send(JSON.stringify({
+        const url = this.api + '/v1/messages';
+        const body = JSON.stringify({
             channel: options.channel,
             message: JSON.stringify(options.message)
-        }));
+        });
+
+        if (is_node) {
+            const request = require('request');
+
+            request.post({
+                url,
+                headers: {
+                    'Authorization': this.key,
+                    'Content-Type': 'application/json'
+                },
+                body
+            });
+        } else {
+            const http = window.XMLHttpRequest
+                ? new XMLHttpRequest()
+                : new ActiveXObject("Microsoft.XMLHTTP");
+
+            http.open('POST', url);
+            http.setRequestHeader('Authorization', this.key);
+            http.setRequestHeader('Content-Type', 'application/json');
+            http.send(body);
+        }
     }
 }
 
