@@ -1,5 +1,9 @@
 const is_node = typeof window === 'undefined';
 
+if (is_node) {
+    const sha256 = require('./sha256.js');
+}
+
 class RapidSockets {
 
     constructor(options = {}) {

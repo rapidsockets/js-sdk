@@ -11,7 +11,7 @@ Install with `npm install rapidsockets-js` and include `const RapidSockets = req
 
 ### Common Usage
 ```js
-rs = new RapidSockets({
+const rs = new RapidSockets({
     key: 'your key'
 });
 
