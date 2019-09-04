@@ -7,7 +7,7 @@ This is the official Software Development Kit for JavaScript to interact with th
 To use the RapidSockets SDK in the browser, copy `dist/rapidsockets.min.js` and include in your site.
 
 ### Node.js specific dependency
-Install with `npm install rapidsockets-js` and include `const RapidSockets = require('rapidsockets-js');`.
+Install with `npm install rapidsockets` and include `const RapidSockets = require('rapidsockets');`.
 
 ### Common Usage
 ```js
