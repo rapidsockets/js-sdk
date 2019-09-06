@@ -62,7 +62,7 @@ class RapidSockets {
 
             // handle auth fail
             if (message.code === 'auth_fail') {
-                console.log('Gateway authentication failed');
+                console.log('RapidSockets Gateway authentication failed');
                 return;
             }
 
@@ -96,17 +96,17 @@ class RapidSockets {
                 });
             }
         } catch (e) {
-            console.log('Invalid message received from Gateway');
+            console.log('Invalid message received from RapidSockets Gateway');
         }
     }
 
     on_close() {
-        console.log('Connection to the Gateway was lost');
+        console.log('Connection to the RapidSockets Gateway was lost');
 
         this.authenticated = false;
 
         setTimeout(() => {
-            console.log('Attempting to reconnect to the Gateway...');
+            console.log('Attempting to reconnect to the RapidSockets Gateway...');
             this.open_connection();
         }, 3000);
     }
