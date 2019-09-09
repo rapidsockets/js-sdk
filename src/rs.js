@@ -90,7 +90,11 @@ class RapidSockets {
                 this.subscriptions.forEach(subscription => {
                     if (subscription.channel !== message.payload.channel) return;
 
-                    message.payload.message = JSON.parse(message.payload.message);
+                    try {
+                        message.payload.message = JSON.parse(message.payload.message);
+                    } catch(e) {
+                        // if message isn't json, it can continue being whatever was sent
+                    }
 
                     subscription.callback(message);
                 });
