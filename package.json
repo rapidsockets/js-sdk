@@ -1,6 +1,6 @@
 {
     "name": "rapidsockets",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "Official JavaScript SDK for the RapidSockets platform",
     "main": "./src/rs.js",
     "repository": {

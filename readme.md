@@ -11,21 +11,26 @@ Install with `npm install rapidsockets` and include `const RapidSockets = requir
 
 ### Common Usage
 ```js
-const rs = new RapidSockets({
-    key: 'your key'
+// initialize and open a connection to the RapidSockets Gateway
+var rs = new RapidSockets({
+    key: 'your multi key'
 });
 
+// start listening for new messages on channel "mytest"
 rs.subscribe({
-    channel: 'mychannel',
+    channel: 'mytest',
     callback: function(packet) {
-        console.log(packet.payload.message); // my message
+        console.log(packet);
     }
 });
 
-rs.publish({
-    channel: 'mychannel',
-    message: 'my message'
-});
+// as a test, publish messages to channel "mytest" every two seconds
+setInterval(function() {
+    rs.publish({
+        channel: 'mytest',
+        message: 'test message'
+    })
+}, 2000);
 ```
 
 ### Development specific notes
