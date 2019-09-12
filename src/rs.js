@@ -90,13 +90,15 @@ class RapidSockets {
                 this.subscriptions.forEach(subscription => {
                     if (subscription.channel !== message.payload.channel) return;
 
+                    let payload = message.payload;
+
                     try {
-                        message.payload.message = JSON.parse(message.payload.message);
+                        payload.message = JSON.parse(payload.message);
                     } catch(e) {
-                        // if message isn't json, it can continue being whatever was sent
+                        // invalid json means just hand off the payload message as is
                     }
 
-                    subscription.callback(message);
+                    subscription.callback(payload);
                 });
             }
         } catch (e) {
