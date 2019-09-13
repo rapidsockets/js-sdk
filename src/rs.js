@@ -82,9 +82,6 @@ class RapidSockets {
                 });
             }
 
-            // detect same client
-            if (message.payload.session === this.session) return;
-
             // handle message
             if (message.code === 'message') {
                 this.subscriptions.forEach(subscription => {
